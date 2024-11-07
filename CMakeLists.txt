@@ -10,4 +10,5 @@ add_executable(malloc101 test.c
         realloc.c
         print_heap.c
         calloc.c
-        search_heap.c)
+        search_heap.c
+        insert_in_list.c)

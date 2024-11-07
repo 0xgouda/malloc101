@@ -1,47 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "malloc.h"
 
-void test1() {
-    int *array1 = mymalloc(10);
-    int *array2 = mymalloc(12);
-    int *array3 = mymalloc(5);
-    print_heap_structure();
+#define NUM_ALLOCS 10000
+#define MAX_SIZE 10240
+#define MAX_ITERATIONS 1000000
 
-    myfree(array1);
-    myfree(array2);
-    print_heap_structure();
-    myfree(array3);
+void random_alloc_free_test() {
+    srand((unsigned int)time(NULL));
 
-    cleanup();
+    void* pointers[NUM_ALLOCS] = {NULL};
+
+    for (int i = 0; i < MAX_ITERATIONS; ++i) {
+        int index = rand() % NUM_ALLOCS;
+        if (pointers[index] == NULL) {
+            // Allocate memory
+            size_t size = (size_t)(rand() % MAX_SIZE) + 1;
+            pointers[index] = mymalloc(size);
+            if (pointers[index] != NULL) {
+                printf("Allocated memory of size %zu at address %p\n", size, pointers[index]);
+            } else {
+                fprintf(stderr, "Allocation failed for size %zu\n", size);
+            }
+        } else {
+            // Free memory
+            printf("Freeing memory at address %p\n", pointers[index]);
+            myfree(pointers[index]);
+            pointers[index] = NULL;
+        }
+    }
+
+    // Free remaining allocated memory
+    for (int i = 0; i < NUM_ALLOCS; ++i) {
+        if (pointers[i] != NULL) {
+            printf("Freeing remaining memory at address %p\n", pointers[i]);
+            myfree(pointers[i]);
+            pointers[i] = NULL;
+        }
+    }
 }
 
-void test2() {
-    int *array1 = mymalloc(10);
-    array1 = myrealloc(array1, 120);
-    print_heap_structure();
-
-    myfree(array1);
-    print_heap_structure();
-
-    cleanup();
+int main() {
+    printf("Starting random allocation and deallocation test...\n");
+    random_alloc_free_test();
+    printf("Test complete.\n");
+    return 0;
 }
-
-void test3() {
-    int *array1 = mycalloc(10, 5);
-    print_heap_structure();
-
-    array1 = myrealloc(array1, 120);
-    print_heap_structure();
-
-    myfree(array1);
-    print_heap_structure();
-
-    cleanup();
-}
-
-int main(void) {
-    // test1();
-    // test2();
-    test3();
-}
-
-

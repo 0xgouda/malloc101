@@ -3,7 +3,6 @@
 // search the Heap List for empty space
 void *search_heap(Block** prev, size_t size) {
     Block *current = heap_start;
-
     while (current != NULL) {
         if (current->free && current->size >= size) {
             // Splitting

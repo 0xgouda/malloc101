@@ -7,7 +7,7 @@ void *mymalloc(size_t size) {
     // approximate the size to be multiple of BLOCK_SIZE
     size = (size + BLOCK_SIZE - 1) & ~(BLOCK_SIZE - 1);
 
-    void *search_freed_heap; Block *last_node;
+    void *search_freed_heap; Block *last_node = NULL;
     if ((search_freed_heap = search_heap(&last_node, size)) != NULL) return search_freed_heap;
 
     // Request more Space from the OS
@@ -22,11 +22,6 @@ void *mymalloc(size_t size) {
     new_block->free = 0;
     new_block->next = NULL;
 
-    if (heap_start != NULL) {
-        last_node->next = new_block;
-    }
-    else {
-        heap_start = new_block;
-    }
+    insert_in_list(new_block);
     return (void *)((uintptr_t) new_block + BLOCK_SIZE);
 }
